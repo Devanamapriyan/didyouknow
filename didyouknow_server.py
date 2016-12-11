@@ -2,6 +2,10 @@
 
 import urllib2
 import json
+
+#############################################################################
+## RESTAPI KUNGFU BELOW
+##
 ##from flask import Flask, request
 ##from flask_restful import Resource, Api
 ##
@@ -26,7 +30,9 @@ import json
 ##
 ##if __name__ == '__main__':
 ##    app.run(debug=True)
-
+##
+## RESTAPI KUNGFU ABOVE
+############################################################################
 
 
 # to do : DB API for storing the topic name, wikipedia data and current location pointer.
@@ -46,9 +52,23 @@ def get_Correct_Topic (topic) :
     key = result['query']['pages'].keys()
     key = key[0]
 
-    print wikiname + "\n"
+    if (key == "-1"):
+        print "Error with the topic. No such topic found on wikipedia!!"
+        return -1
+
+    print "***************************************\n" + wikiname + "\n"
     print result['query']['pages'][key]['extract']
 
+    
+    return 1
 
 
-get_Correct_Topic ("docker")
+
+#####################################################
+
+get_Correct_Topic ("Bangalore")
+
+
+
+
+
