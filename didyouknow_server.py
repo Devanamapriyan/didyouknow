@@ -4,8 +4,8 @@ import urllib2
 import json
 #############################################################################
 ## RESTAPI KUNGFU BELOW
-from flask import Flask, request
-from flask_restful import Resource, Api
+from flask import Flask, request, jsonify
+from flask_restful import Resource, Api, reqparse
 
 app = Flask(__name__)
 api = Api(app)
@@ -15,52 +15,55 @@ parser = reqparse.RequestParser()
 parser.add_argument('username')
 parser.add_argument('topic_name')
 
-
 class nextTopic(Resource):
      def get(self):
-         return {topic_id: topic_list[username][topic_id]}
+          username = request.args.get("username")
+          topic_id = request.args.get("topic_id")
+          d = topic_list[username][topic_id]
+          return d
 
 class listAllTopic(Resource):
     def get(self):
-        return {topic_list}
+         d = topic_list
+         return d
     
 class listUserTopic(Resource):
     def get(self):
-        return {topic_list[username]}
+         username = request.args.get("username")
+         d = topic_list[username]
+         return d
     
 class delTopic(Resource):
     def delete(self):
         username = request.form['username']
         topic_id = request.form['topic_id']
         del(topic_list[username][topic_id])
-        return {topic_list[username]}
+        d = topic_list[username]
+        return d
     
 class addTopic(Resource):
     def put(self):
-        username = request.form['username']
-        topic_name = request.form['topic_name']
-        (topic_list[username]).append(topic_name)
-        wikiname = topic_name + "_(disambiguation)"
-        content = urllib2.urlopen("https://en.wikipedia.org/w/api.php?action=query&titles="+wikiname+"&prop=extracts&explaintext&format=json").read()
-        result = json.loads(content)
-        key = result['query']['pages'].keys()
-        key = key[0]
-        if (key == "-1"):
-            print "Error with the topic. No such topic found on wikipedia!!"
-            return -1
-        result = "***************************************\n" + wikiname + "\n"
-        result.append(result['query']['pages'][key]['extract'])
-        (content[username][topic_name]).append(result)
-        return {topic_list[username]}
+         args = parser.parse_args()
+         username = args['username']
+         topic_name = args['topic_name']
+         if username in topic_list:
+              if topic_name not in topic_list[username]:
+                   topic_list.setdefault(username,[]).append(topic_name)
+              else:
+                   return "!!Topic not added, Already In List!!"
+         else:
+              topic_list.setdefault(username,[]).append(topic_name)
+         d = topic_list
+         return d
 
 api.add_resource(nextTopic, '/next')
 api.add_resource(listAllTopic, '/listAllTopic')
 api.add_resource(listUserTopic, '/listUserTopic')
 api.add_resource(delTopic, '/delTopic')
-api.add_resource(nextTopic, '/addTopic')
+api.add_resource(addTopic, '/addTopic')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True,host='0.0.0.0', port=8001)
 
 ## RESTAPI KUNGFU ABOVE
 ############################################################################
@@ -69,6 +72,20 @@ if __name__ == '__main__':
 # for now, lets simulate for a single case without db.
 
 #####################################################
+
+
+def addWikidata (topic_name):
+     wikiname = topic_name + "_(disambiguation)"
+     content = urllib2.urlopen("https://en.wikipedia.org/w/api.php?action=query&titles="+wikiname+"&prop=extracts&explaintext&format=json").read()
+     result = json.loads(content)
+     key = result['query']['pages'].keys()
+     key = key[0]
+     if (key == "-1"):
+        result = "!! Error with the topic. No such topic found on wikipedia !!"
+        return result
+     result = "***************************************\n" + wikiname + "\n"
+     result.append(result['query']['pages'][key]['extract'])
+     (content[username][topic_name]).append(result)
 
 
 
