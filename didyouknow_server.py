@@ -11,9 +11,13 @@ app = Flask(__name__)
 api = Api(app)
 topic_list = {"user" : ["topicname"]}
 content = {"user": {"topicname" : ["content"]}}
+parser = reqparse.RequestParser()
+parser.add_argument('username')
+parser.add_argument('topic_name')
+
 
 class nextTopic(Resource):
-     def get(self, username, topic_id):
+     def get(self):
          return {topic_id: topic_list[username][topic_id]}
 
 class listAllTopic(Resource):
@@ -21,18 +25,18 @@ class listAllTopic(Resource):
         return {topic_list}
     
 class listUserTopic(Resource):
-    def get(self,username):
+    def get(self):
         return {topic_list[username]}
     
 class delTopic(Resource):
-    def delete(self, username, topic_id):
+    def delete(self):
         username = request.form['username']
         topic_id = request.form['topic_id']
         del(topic_list[username][topic_id])
         return {topic_list[username]}
     
 class addTopic(Resource):
-    def put(self, username, topic_name):
+    def put(self):
         username = request.form['username']
         topic_name = request.form['topic_name']
         (topic_list[username]).append(topic_name)
@@ -49,7 +53,12 @@ class addTopic(Resource):
         (content[username][topic_name]).append(result)
         return {topic_list[username]}
 
-api.add_resource(TodoSimple, '/<string:todo_id>')
+api.add_resource(nextTopic, '/next')
+api.add_resource(listAllTopic, '/listAllTopic')
+api.add_resource(listUserTopic, '/listUserTopic')
+api.add_resource(delTopic, '/delTopic')
+api.add_resource(nextTopic, '/addTopic')
+
 if __name__ == '__main__':
     app.run(debug=True)
 
