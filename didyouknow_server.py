@@ -9,24 +9,26 @@ from flask_restful import Resource, Api
 
 app = Flask(__name__)
 api = Api(app)
-topic_list = {}
-topic_counter = 0
+topic_list = {"hello" : ["World"]}
 
 class nextTopic(Resource):
      def get(self, topic_id):
          return {topic_id: topic_list[topic_id]}
-    
-class listTopic(Resource):
+
+class listAllTopic(Resource):
     def get(self):
         return {topic_list}
     
-class delTopic(Resource):
-    def delete(self, topic_id):
-        del(topic_list[topic_id])
-        topic_counter--;
-        return {topic_list}
+class listUserTopic(Resource):
+    def get(self,username):
+        return {topic_list[username]}
     
-class newTopic(Resource):
+class delTopic(Resource):
+    def delete(self, username, topic_id):
+        del(topic_list[username][topic_id])
+        return {topic_list[username]}
+    
+class addTopic(Resource):
     def put(self, topic_name):
         topic_list[topic_counter++] = request.form['name']
         wikiname = topic + "_(disambiguation)"
