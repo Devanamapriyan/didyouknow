@@ -4,7 +4,7 @@ import urllib2
 import json
 #############################################################################
 ## RESTAPI KUNGFU BELOW
-from flask import Flask, request, jsonify
+from flask import Flask, request
 from flask_restful import Resource, Api, reqparse
 
 app = Flask(__name__)
@@ -68,11 +68,12 @@ if __name__ == '__main__':
     app.run(debug=True,host='0.0.0.0', port=8002)
 
 ## RESTAPI KUNGFU ABOVE
+    
 ############################################################################
-
-# to do : DB API for storing the topic name, wikipedia data and current location pointer.
-# for now, lets simulate for a single case without db.
-
+# To do:    
+# Better error condition checks and boundary cases to be caught.
+# Add content from wikipedia in a different structure called "content"
+# link this content with the nextTopic, delTopic and addTopic functions 
 #####################################################
 
 
