@@ -14,12 +14,13 @@ content = {"user": {"topicname" : ["content"]}}
 parser = reqparse.RequestParser()
 parser.add_argument('username')
 parser.add_argument('topic_name')
+parser.add_argument('topic_id')
 
 class nextTopic(Resource):
      def get(self):
           username = request.args.get("username")
           topic_id = request.args.get("topic_id")
-          d = topic_list[username][topic_id]
+          d = topic_list[username][int(topic_id)]
           return d
 
 class listAllTopic(Resource):
@@ -35,11 +36,12 @@ class listUserTopic(Resource):
     
 class delTopic(Resource):
     def delete(self):
-        username = request.form['username']
-        topic_id = request.form['topic_id']
-        del(topic_list[username][topic_id])
-        d = topic_list[username]
-        return d
+         args = parser.parse_args()
+         username = args['username']
+         topic_id = args['topic_id']
+         del(topic_list[username][int(topic_id)])
+         d = topic_list[username]
+         return d
     
 class addTopic(Resource):
     def put(self):
@@ -56,14 +58,14 @@ class addTopic(Resource):
          d = topic_list
          return d
 
-api.add_resource(nextTopic, '/next')
+api.add_resource(nextTopic, '/nextTopic')
 api.add_resource(listAllTopic, '/listAllTopic')
 api.add_resource(listUserTopic, '/listUserTopic')
 api.add_resource(delTopic, '/delTopic')
 api.add_resource(addTopic, '/addTopic')
 
 if __name__ == '__main__':
-    app.run(debug=True,host='0.0.0.0', port=8001)
+    app.run(debug=True,host='0.0.0.0', port=8002)
 
 ## RESTAPI KUNGFU ABOVE
 ############################################################################
