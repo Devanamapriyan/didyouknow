@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
 import urllib2
-import json
 import os
 #############################################################################
 ## RESTAPI KUNGFU BELOW

@@ -1,0 +1,10 @@
+runtime: python27
+api_version: 1
+threadsafe: true
+libraries:
+- name: flask
+  version: "latest"
+-name: flask_restful
+  version: "latest"
+-name: urllib2
+  version: "latest"
