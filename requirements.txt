@@ -1,0 +1,5 @@
+pip install flask
+pip install flask_restful
+pip install json
+pip install urllib2
+pip install os
