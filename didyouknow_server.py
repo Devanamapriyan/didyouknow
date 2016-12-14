@@ -17,14 +17,15 @@ parser.add_argument('username')
 parser.add_argument('topic_name')
 parser.add_argument('topic_id')
 
-def addWikidata (topic_name):
+def addWikidata (username,topic_name):
      wikiname = topic_name + "_(disambiguation)"
      content = urllib2.urlopen("https://en.wikipedia.org/w/api.php?action=query&titles="+wikiname+"&prop=extracts&explaintext&format=json").read()
      result = json.loads(content)
      key = result['query']['pages'].keys()
      key = key[0]
      if (key == "-1"):
-        result = "!! Error with the topic. No such topic found on wikipedia !!"
+        result = "!! Error in adding the topic. No such topic found on wikipedia !!"
+        topic_list[username].remove(topic_name)
         return result
      return result['query']['pages'][key]['extract']
 
@@ -63,12 +64,12 @@ class addTopic(Resource):
          if username in topic_list:
               if topic_name not in topic_list[username]:
                    topic_list.setdefault(username,[]).append(topic_name)
-                   d=addWikidata(topic_name)
+                   d=addWikidata(username,topic_name)
               else:
                    d="!!Topic not added, Already In List!!"
          else:
               topic_list.setdefault(username,[]).append(topic_name)
-              d=addWikidata(topic_name)
+              d=addWikidata(username,topic_name)
          #d = topic_list
          return d
 
