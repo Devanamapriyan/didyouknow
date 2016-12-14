@@ -79,7 +79,7 @@ api.add_resource(delTopic, '/delTopic')
 api.add_resource(addTopic, '/addTopic')
 
 if __name__ == '__main__':
-    IP=os.getenv("IP")
+    IP="0.0.0.0"
     PORT=os.getenv("PORT")
     app.run(debug=True,host=IP, port=int(PORT))
 
