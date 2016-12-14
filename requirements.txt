@@ -1,5 +1,2 @@
-pip install flask
-pip install flask_restful
-pip install json
-pip install urllib2
-pip install os
+pip install flask==0.11.1
+pip install flask_restful==0.3.5
