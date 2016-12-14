@@ -2,6 +2,7 @@
 
 import urllib2
 import json
+import os
 #############################################################################
 ## RESTAPI KUNGFU BELOW
 from flask import Flask, request
@@ -78,7 +79,11 @@ api.add_resource(delTopic, '/delTopic')
 api.add_resource(addTopic, '/addTopic')
 
 if __name__ == '__main__':
-    app.run(debug=True,host='0.0.0.0', port=8003)
+    IP=""
+    PORT=""
+    IP=os.getenv(IP, "0.0.0.0")
+    PORT=os.getenv(PORT, int("8080"))
+    app.run(debug=True,host=IP, port=PORT)
 
 ## RESTAPI KUNGFU ABOVE
     
