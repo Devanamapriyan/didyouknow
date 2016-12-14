@@ -58,8 +58,8 @@ class delTopic(Resource):
 class addTopic(Resource):
     def put(self):
          args = parser.parse_args()
-         username = args['username']
-         topic_name = args['topic_name']
+         username = str(args['username']).lower()
+         topic_name = str(args['topic_name']).lower()
          if username in topic_list:
               if topic_name not in topic_list[username]:
                    topic_list.setdefault(username,[]).append(topic_name)
