@@ -16,6 +16,17 @@ parser.add_argument('username')
 parser.add_argument('topic_name')
 parser.add_argument('topic_id')
 
+def addWikidata (topic_name):
+     wikiname = topic_name + "_(disambiguation)"
+     content = urllib2.urlopen("https://en.wikipedia.org/w/api.php?action=query&titles="+wikiname+"&prop=extracts&explaintext&format=json").read()
+     result = json.loads(content)
+     key = result['query']['pages'].keys()
+     key = key[0]
+     if (key == "-1"):
+        result = "!! Error with the topic. No such topic found on wikipedia !!"
+        return result
+     return result['query']['pages'][key]['extract']
+
 class nextTopic(Resource):
      def get(self):
           username = request.args.get("username")
@@ -51,11 +62,13 @@ class addTopic(Resource):
          if username in topic_list:
               if topic_name not in topic_list[username]:
                    topic_list.setdefault(username,[]).append(topic_name)
+                   d=addWikidata(topic_name)
               else:
-                   return "!!Topic not added, Already In List!!"
+                   d="!!Topic not added, Already In List!!"
          else:
               topic_list.setdefault(username,[]).append(topic_name)
-         d = topic_list
+              d=addWikidata(topic_name)
+         #d = topic_list
          return d
 
 api.add_resource(nextTopic, '/nextTopic')
@@ -65,7 +78,7 @@ api.add_resource(delTopic, '/delTopic')
 api.add_resource(addTopic, '/addTopic')
 
 if __name__ == '__main__':
-    app.run(debug=True,host='0.0.0.0', port=8002)
+    app.run(debug=True,host='0.0.0.0', port=8003)
 
 ## RESTAPI KUNGFU ABOVE
     
@@ -77,18 +90,8 @@ if __name__ == '__main__':
 #####################################################
 
 
-def addWikidata (topic_name):
-     wikiname = topic_name + "_(disambiguation)"
-     content = urllib2.urlopen("https://en.wikipedia.org/w/api.php?action=query&titles="+wikiname+"&prop=extracts&explaintext&format=json").read()
-     result = json.loads(content)
-     key = result['query']['pages'].keys()
-     key = key[0]
-     if (key == "-1"):
-        result = "!! Error with the topic. No such topic found on wikipedia !!"
-        return result
-     result = "***************************************\n" + wikiname + "\n"
-     result.append(result['query']['pages'][key]['extract'])
-     (content[username][topic_name]).append(result)
+
+
 
 
 
