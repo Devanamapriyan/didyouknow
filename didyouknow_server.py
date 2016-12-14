@@ -82,7 +82,7 @@ if __name__ == '__main__':
     IP=""
     PORT=""
     IP=os.getenv(IP, "0.0.0.0")
-    PORT=os.getenv(PORT, int("8080"))
+    PORT=os.getenv(PORT, int("80"))
     app.run(debug=True,host=IP, port=PORT)
 
 ## RESTAPI KUNGFU ABOVE
