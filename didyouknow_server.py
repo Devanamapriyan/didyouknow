@@ -11,7 +11,7 @@ from flask_restful import Resource, Api, reqparse
 app = Flask(__name__)
 api = Api(app)
 topic_list = {"user" : ["topicname"]}
-content = {"user": {"topicname" : ["content"]}}
+content_list = {}
 parser = reqparse.RequestParser()
 parser.add_argument('username')
 parser.add_argument('topic_name')
@@ -27,7 +27,9 @@ def addWikidata (username,topic_name):
         result = "!! Error in adding the topic. No such topic found on wikipedia !!"
         topic_list[username].remove(topic_name)
         return result
-     return result['query']['pages'][key]['extract']
+     content_tmp = { username: { topic_name: [result['query']['pages'][key]['extract']]}}  
+     content_list.update(content_tmp)
+     return content_list[username][topic_name]
 
 class nextTopic(Resource):
      def get(self):
