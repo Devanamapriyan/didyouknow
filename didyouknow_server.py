@@ -3,6 +3,7 @@
 import json
 import urllib2
 import os
+import re
 #############################################################################
 ## RESTAPI KUNGFU BELOW
 from flask import Flask, request
@@ -17,17 +18,22 @@ parser.add_argument('username')
 parser.add_argument('topic_name')
 parser.add_argument('topic_id')
 
+def urlify(s):
+    # Remove all non-word characters (everything except numbers and letters)
+    s = re.sub(r"[^\w\s]", '', s)
+    # Replace all runs of whitespace with a single dash
+    s = re.sub(r"\s+", '-', s)
+    return s
+     
+
 def addWikidata (username,topic_name):
-     wikiname = topic_name + "_(disambiguation)"
-     content = urllib2.urlopen("https://en.wikipedia.org/w/api.php?action=query&titles="+wikiname+"&prop=extracts&explaintext&format=json").read()
-     result = json.loads(content)
-     key = result['query']['pages'].keys()
-     key = key[0]
-     if (key == "-1"):
-        result = "!! Error in adding the topic. No such topic found on wikipedia !!"
-        topic_list[username].remove(topic_name)
-        return result
-     content_tmp = { username: { topic_name: [result['query']['pages'][key]['extract']]}}  
+     content = urllib2.urlopen("https://en.wikipedia.org/w/api.php?action=opensearch&search="+topic_name+"&limit=20&namespace=0&format=jsonfm").read()
+    #  key = key[0]
+    #  if (key == "-1"):
+    #     result = "!! Error in adding the topic. No such topic found on wikipedia !!"
+    #     topic_list[username].remove(topic_name)
+    #     return result
+     content_tmp = { username: { topic_name: [content]}}
      content_list.update(content_tmp)
      return content_list[username][topic_name]
 
@@ -63,6 +69,8 @@ class addTopic(Resource):
          args = parser.parse_args()
          username = str(args['username']).lower()
          topic_name = str(args['topic_name']).lower()
+         username = urlify(username)
+         topic_name = urlify(topic_name)
          if username in topic_list:
               if topic_name not in topic_list[username]:
                    topic_list.setdefault(username,[]).append(topic_name)
