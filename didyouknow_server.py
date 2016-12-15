@@ -60,14 +60,29 @@ class listUserTopic(Resource):
          username = request.args.get("username")
          d = topic_list[username]
          return d
-    
+
+class delUser(Resource):
+    def delete(self):
+         args = parser.parse_args()
+         username = args['username']
+         if username not in topic_list:
+             return "!! username does not exist !!"
+         else:
+             topic_list.pop(username)
+             content_list.pop(username)
+             d = topic_list
+             return d
+         
 class delTopic(Resource):
     def delete(self):
          args = parser.parse_args()
          username = args['username']
          topic_id = args['topic_id']
+         content_list[username].pop(topic_list[username][int(topic_id)])
          del(topic_list[username][int(topic_id)])
          d = topic_list[username]
+         if d is []:
+             delUser.delete(self)
          return d
     
 class addTopic(Resource):
@@ -91,9 +106,10 @@ class addTopic(Resource):
 
 api.add_resource(nextTopic, '/nextTopic')
 api.add_resource(listAllTopic, '/listAllTopic')
-api.add_resource(listAllContent, '/listAllContent')
+api.add_resource(listAllContent, '/listAllContent') # no need to expose this API outside. Mostly for internal debugging purposes only.
 api.add_resource(listUserTopic, '/listUserTopic')
 api.add_resource(delTopic, '/delTopic')
+api.add_resource(delUser, '/delUser')
 api.add_resource(addTopic, '/addTopic')
 
 if __name__ == '__main__':
