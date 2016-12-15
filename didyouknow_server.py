@@ -27,14 +27,15 @@ def urlify(s):
      
 
 def addWikidata (username,topic_name):
-     content = urllib2.urlopen("https://en.wikipedia.org/w/api.php?action=opensearch&search="+topic_name+"&limit=20&namespace=0&format=jsonfm").read()
+     content = urllib2.urlopen("https://en.wikipedia.org/w/api.php?action=opensearch&search="+topic_name+"&limit=20&namespace=0&format=json").read()
     #  key = key[0]
     #  if (key == "-1"):
     #     result = "!! Error in adding the topic. No such topic found on wikipedia !!"
     #     topic_list[username].remove(topic_name)
     #     return result
-     content_tmp = { username: { topic_name: [content]}}
-     content_list.update(content_tmp)
+     content_list.setdefault(username,{})
+     content_list[username].setdefault(topic_name,[])
+     content_list[username][topic_name]=[content]
      return content_list[username][topic_name]
 
 class nextTopic(Resource):
@@ -48,7 +49,12 @@ class listAllTopic(Resource):
     def get(self):
          d = topic_list
          return d
-    
+         
+class listAllContent(Resource):
+    def get(self):
+         d = content_list
+         return d         
+         
 class listUserTopic(Resource):
     def get(self):
          username = request.args.get("username")
@@ -85,6 +91,7 @@ class addTopic(Resource):
 
 api.add_resource(nextTopic, '/nextTopic')
 api.add_resource(listAllTopic, '/listAllTopic')
+api.add_resource(listAllContent, '/listAllContent')
 api.add_resource(listUserTopic, '/listUserTopic')
 api.add_resource(delTopic, '/delTopic')
 api.add_resource(addTopic, '/addTopic')
