@@ -28,11 +28,11 @@ def urlify(s):
 
 def addWikidata (username,topic_name):
      content = urllib2.urlopen("https://en.wikipedia.org/w/api.php?action=opensearch&search="+topic_name+"&limit=20&namespace=0&format=json").read()
-    #  key = key[0]
-    #  if (key == "-1"):
-    #     result = "!! Error in adding the topic. No such topic found on wikipedia !!"
-    #     topic_list[username].remove(topic_name)
-    #     return result
+    #  checknull = str(content).replace()
+    #  checknull = str(content).split(",")
+    #  if None in checknull:
+    #      topic_list[username].remove(topic_name)
+    #      return "!!ERROR: content not added because info does not exist in wikipedia!!"
      content_list.setdefault(username,{})
      content_list[username].setdefault(topic_name,[])
      content_list[username][topic_name]=[content]
@@ -40,10 +40,20 @@ def addWikidata (username,topic_name):
 
 class nextTopic(Resource):
      def get(self):
-          username = request.args.get("username")
+          username = str(request.args.get("username")).lower()
+          username = urlify(username)
           topic_id = request.args.get("topic_id")
-          d = topic_list[username][int(topic_id)]
-          return d
+          try:
+              topic_id = int(topic_id)
+          except ValueError:
+              return "!!ERROR: Topic_id given is not an number!!"
+          if username not in topic_list:
+              return "!!ERROR: username not in database!!"
+          if int(topic_id) not in range(0,len(topic_list[username])):
+              return "!!ERROR: Topic_id not within valid range. Expecting topic_id between 0-"+str(len(topic_list[username])-1)+" !!"
+          else:
+              d = topic_list[username][int(topic_id)]
+              return d
 
 class listAllTopic(Resource):
     def get(self):
